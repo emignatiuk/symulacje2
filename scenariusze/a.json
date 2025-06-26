@@ -1,0 +1,72 @@
+{
+    "species_init": {
+        "p53": 26854,
+        "mdmcyto": 11173,
+        "pten": 154378,
+        "mdmn": 17245
+    },
+    "parameters": {
+        "p1": 8.8,
+        "p2": 440,
+        "p3": 100,
+        "d1": 1.375e-14,
+        "d2": 1.375e-4,
+        "d3": 3e-5,
+        "k1": 1.925e-4,
+        "k2": 1e5,
+        "k3": 1.5e5,
+        "siRNA_factor": 1,
+        "damage_factor": 0.1,
+        "pten_on_factor": 1
+    },
+    "reactions": {
+        "p53_synthesis": {
+            "params": ["p1"],
+            "species": [],
+            "equation": "p1",
+            "effects": {"p53": 1}
+        },
+        "p53_degradation": {
+            "params": ["d1"],
+            "species": ["p53", "mdmn"],
+            "equation": "d1 * p53 * (mdmn ** 2)",
+            "effects": {"p53": -1}
+        },
+        "mdmcyto_synthesis": {
+            "params": ["p2", "k2", "siRNA_factor"],
+            "species": ["p53"],
+            "equation": "p2 * siRNA_factor * (p53 ** 4) / ((p53 ** 4) + (k2 ** 4))",
+            "effects": {"mdmcyto": 1}
+        },
+        "mdmcyto_transport": {
+            "params": ["k1", "k3"],
+            "species": ["mdmcyto", "pten"],
+            "equation": "k1 * (k3 ** 2) / ((k3 ** 2) + (pten ** 2)) * mdmcyto",
+            "effects": {"mdmcyto": -1, "mdmn": 1}
+        },
+        "mdmcyto_degradation": {
+            "params": ["d2", "damage_factor"],
+            "species": ["mdmcyto"],
+            "equation": "d2 * damage_factor * mdmcyto",
+            "effects": {"mdmcyto": -1}
+        },
+        "mdmn_degradation": {
+            "params": ["d2", "damage_factor"],
+            "species": ["mdmn"],
+            "equation": "d2 * damage_factor * mdmn",
+            "effects": {"mdmn": -1}
+        },
+        "pten_synthesis": {
+            "params": ["p3", "pten_on_factor", "k2"],
+            "species": ["p53"],
+            "equation": "p3 * pten_on_factor * (p53 ** 4) / ((p53 ** 4) + (k2 ** 4))",
+            "effects": {"pten": 1}
+        },
+        "pten_degradation": {
+            "params": ["d3"],
+            "species": ["pten"],
+            "equation": "d3 * pten",
+            "effects": {"pten": -1}
+        }
+    }
+}
